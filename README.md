@@ -140,9 +140,9 @@ const FIREBASE_CONFIG = {
 
 ## How the app works
 
-- **Scramble / Fourball / Singles tabs** — one card per match. Tap to open, enter gross strokes per hole. Status updates live (2 up, AS thru 4, 3&2).
-- **Handicaps** — strokes are applied automatically to the hardest holes, based on the stroke index you enter. A gold dot marks a hole where that player gets a shot.
-- **Leaderboard** — running points total, 1 point a win, ½ each for a half.
+- **Scramble / Fourball / Singles tabs** — one card per match. Tap to open, then mark each hole: tap the winning team's cell once for **W** (1 point), tap again for **T** (tied, ½ point each), tap a third time to clear. The other team's cell shows L automatically. Status updates live (e.g. 4½–2½ after 7 holes).
+- **Handicaps** — shown for reference so the flight can agree who won each hole. A gold dot marks a hole where that player or team gets a shot, based on the stroke index you enter.
+- **Leaderboard** — running points total across every hole played: 1 point per hole won, ½ each for a tied hole, 9 points available per match.
 - **Photos** — shared photo wall. Images are shrunk in the browser before saving.
 - **Info** — countdown, singles matchups with player photos, and the day's schedule.
 
