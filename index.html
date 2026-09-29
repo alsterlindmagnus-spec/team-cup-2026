@@ -255,8 +255,8 @@
     {rowName:'Grant McKenzie', rowHcp:6.1, eurName:'Fredrik Lagerman', eurHcp:4.7},
     {rowName:'Ji\u0159\u00ed Pavl\u00ed\u010dek', rowHcp:6.6, eurName:'Mats Wilborg', eurHcp:6.0},
     {rowName:'Magnus Alsterlind', rowHcp:8.7, eurName:'Fredrik Enqvist', eurHcp:6.3},
-    {rowName:'Oscar Johansson', rowHcp:16.3, eurName:'Fredrik Nyr\u00e9n', eurHcp:7.8},
-    {rowName:'Pavel Kysela', rowHcp:14.7, eurName:'Richard Thorstrand', eurHcp:9.4},
+    {rowName:'Pavel Kysela', rowHcp:14.7, eurName:'Fredrik Nyr\u00e9n', eurHcp:7.8},
+    {rowName:'Oscar Johansson', rowHcp:16.3, eurName:'Richard Thorstrand', eurHcp:9.4},
     {rowName:'Paul Cook', rowHcp:16.8, eurName:'Christopher Thorstrand', eurHcp:13.2},
     {rowName:'John Tokaruk', rowHcp:18.9, eurName:'Fredrik Millde', eurHcp:16.1},
     {rowName:'Ronald Dasbach', rowHcp:20.0, eurName:'Filip Bjurstr\u00f6m', eurHcp:18.7},
@@ -332,7 +332,7 @@
     ensureObjects();
   }
 
-  const SEED_VERSION = 5;
+  const SEED_VERSION = 6;
 
   function configBody(){
     return { seedVersion: SEED_VERSION, meta, siFront, siBack,
@@ -433,9 +433,9 @@
   }
 
   async function migrate(fromVersion){
-    // v4: updated handicaps for McKenzie, Johansson and Cook. v5: Milde renamed Millde.
+    // v4: updated handicaps for McKenzie, Johansson and Cook. v5: Milde renamed Millde. v6: singles re-ordered by hcp.
     // Re-applying the preloads refreshes names, handicaps and strokes; scores already entered are kept.
-    if(fromVersion < 5){ migrateSingles(); migrateV3(); }
+    if(fromVersion < 6){ migrateSingles(); migrateV3(); }
     await seedToDb();
   }
 
