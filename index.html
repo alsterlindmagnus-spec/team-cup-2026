@@ -336,7 +336,7 @@
     ensureObjects();
   }
 
-  const SEED_VERSION = 6;
+  const SEED_VERSION = 7;
 
   function configBody(){
     return { seedVersion: SEED_VERSION, meta, siFront, siBack,
@@ -436,10 +436,30 @@
     });
   }
 
+  // A match someone added with "+ Add" but never filled in: no names and no holes marked
+  function isEmptyMatch(type, id){
+    const d = defs[type][id], sc = scores[type][id];
+    if(!d) return true;
+    const names = type==='singles' ? [d.rowName, d.eurName]
+      : type==='fourball' ? [d.row[0].n, d.row[1].n, d.eur[0].n, d.eur[1].n]
+      : [d.row.n, d.eur.n];
+    const noNames = names.every(n=>!String(n||'').trim());
+    const noScores = !hasHoles(sc) || sc.holes.every(h=>h==null);
+    return noNames && noScores;
+  }
+
   async function migrate(fromVersion){
     // v4: updated handicaps for McKenzie, Johansson and Cook. v5: Milde renamed Millde. v6: singles re-ordered by hcp.
     // Re-applying the preloads refreshes names, handicaps and strokes; scores already entered are kept.
-    if(fromVersion < 6){ migrateSingles(); migrateV3(); }
+    if(fromVersion < 7){ migrateSingles(); migrateV3(); }
+    // v7: drop empty matches (a blank "TBC v TBC" scramble pairing had been added on the live site)
+    if(fromVersion < 7){
+      for(const type of ['singles','fourball','scramble']){
+        const empty = ids[type].filter(id=>isEmptyMatch(type,id));
+        ids[type] = ids[type].filter(id=>!empty.includes(id));
+        for(const id of empty){ delete defs[type][id]; delete scores[type][id]; await removeMatchDoc(type,id); }
+      }
+    }
     await seedToDb();
   }
 
