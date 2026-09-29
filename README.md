@@ -142,7 +142,7 @@ const FIREBASE_CONFIG = {
 
 - **Scramble / Fourball / Singles tabs** — one card per match. Tap to open, then mark each hole: tap the winning team's cell once for **W** (1 point), tap again for **T** (tied, ½ point each), tap a third time to clear. The other team's cell shows L automatically. Status updates live (e.g. 4½–2½ after 7 holes).
 - **Handicaps** — shown for reference so the flight can agree who won each hole. A gold dot marks a hole where that player or team gets a shot, based on the stroke index you enter.
-- **Leaderboard** — running points total across every hole played: 1 point per hole won, ½ each for a tied hole, 9 points available per match.
+- **Leaderboard** — overall score in match points. When all 9 holes of a match are marked, the team with more hole points wins that match and gets **1 point**, whatever the margin. A match level on hole points gives ½ point each. Matches still in progress show their live hole score but add nothing yet.
 - **Photos** — shared photo wall. Images are shrunk in the browser before saving.
 - **Info** — countdown, singles matchups with player photos, and the day's schedule.
 

@@ -98,7 +98,7 @@
   .lb-line{ display:flex; justify-content:space-between; font-size:12px; padding:4px 0; border-bottom:1px dashed var(--line); gap:8px; }
   .lb-line:last-child{ border-bottom:none; }
   .lb-line span:first-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .lb-line .pt{ font-weight:700; width:38px; text-align:center; flex-shrink:0; }
+  .lb-line .pt{ font-weight:700; min-width:38px; text-align:right; flex-shrink:0; white-space:nowrap; }
   .lb-line .pt.row{ color:var(--row); } .lb-line .pt.eur{ color:var(--eur); }
 
   .setup-panel{ padding:14px 12px; }
@@ -507,13 +507,17 @@
     if(played===0) return Object.assign(base, {label:'Not started', cls:'', text:'Tap W or T on each hole'});
     const lead = row>eur ? 'row' : eur>row ? 'eur' : '';
     const leader = lead==='row' ? meta.teamRow : lead==='eur' ? meta.teamEur : '';
-    if(played===9) return Object.assign(base, {label:`${score} FINAL`, cls:'final',
+    if(played===9) return Object.assign(base, {label:`${score} FINAL`, cls:'final', winner: lead || 'tie',
       text: lead ? `${leader} win the match ${score}` : `Match level ${score}`});
     return Object.assign(base, {label:`${score} · ${played}`, cls:lead,
       text: `${lead ? leader+' lead' : 'Level'} ${score} after ${played} hole${played>1?'s':''}`});
   }
+  // Overall leaderboard: a finished match is worth 1 point to the winner, whatever the
+  // hole score; a match level on hole points gives ½ each.
   function points(status){
-    return status.played ? {row:status.row, eur:status.eur} : null;
+    if(!status.winner) return null;
+    if(status.winner==='tie') return {row:0.5, eur:0.5};
+    return status.winner==='row' ? {row:1, eur:0} : {row:0, eur:1};
   }
 
   function rankFor(nine){ return nine==='back' ? siBack : siFront; }
@@ -728,30 +732,34 @@
     </div>`;
   }
 
-  // Every hole is worth 1 point, so the total available is 9 per match
+  // One point available per match
   function computeAllPoints(){
-    let row=0, eur=0, holesPlayed=0, total=0, matches=0;
+    let row=0, eur=0, decidedCount=0, total=0;
     const lines = {singles:[], fourball:[], scramble:[]};
     function add(type, st, label){
-      const pts = points(st); total+=9; matches++;
-      holesPlayed += st.played;
-      if(pts){ row+=pts.row; eur+=pts.eur; }
+      const pts = points(st); total++;
+      if(pts){ row+=pts.row; eur+=pts.eur; decidedCount++; }
       lines[type].push({label, status:st, pts});
     }
     ids.scramble.forEach(id=>{ const d = defs.scramble[id]; add('scramble', scrambleStatus(id), `${d.row.n||'TBC'} v ${d.eur.n||'TBC'}`); });
     ids.fourball.forEach(id=>{ const d = defs.fourball[id]; add('fourball', fourballStatus(id), `${(d.row[0].n||'TBC').split(' ').pop()} / ${(d.row[1].n||'TBC').split(' ').pop()} v ${(d.eur[0].n||'TBC').split(' ').pop()} / ${(d.eur[1].n||'TBC').split(' ').pop()}`); });
     ids.singles.forEach(id=>{ const d = defs.singles[id]; add('singles', singlesStatus(id), `${d.rowName||'TBC'} v ${d.eurName||'TBC'}`); });
-    return {row, eur, holesPlayed, total, matches, lines};
+    return {row, eur, decidedCount, total, lines};
   }
 
   function renderLeaderboard(){
     const r = computeAllPoints();
     const denom = Math.max(r.total,1);
     const rowPct = r.row/denom*100, eurPct = r.eur/denom*100, restPct = 100-rowPct-eurPct;
+    // Hole score while playing; once finished, the hole score plus the match point (1–0, 0–1, ½–½)
     function fmtLine(l){
-      const cls = l.pts ? (l.pts.row>l.pts.eur?'row':l.pts.eur>l.pts.row?'eur':'') : '';
-      const thru = l.status.played && l.status.played<9 ? ` <span class="muted-mini">(${l.status.played})</span>` : '';
-      return `<div class="lb-line"><span>${esc(l.label)}</span><span class="pt ${cls}">${l.pts? fmtPts(l.pts.row)+'–'+fmtPts(l.pts.eur)+thru : '—'}</span></div>`;
+      const st = l.status;
+      const cls = l.pts ? (l.pts.row>l.pts.eur?'row':l.pts.eur>l.pts.row?'eur':'') : (st.cls==='row'||st.cls==='eur'?st.cls:'');
+      const holes = st.played ? `${fmtPts(st.row)}–${fmtPts(st.eur)}` : '—';
+      const right = l.pts
+        ? `<span class="muted-mini">${holes}</span> ${l.pts.row===l.pts.eur ? '½–½' : l.pts.row>l.pts.eur ? '1–0' : '0–1'}`
+        : st.played ? `${holes} <span class="muted-mini">(${st.played})</span>` : '—';
+      return `<div class="lb-line"><span>${esc(l.label)}</span><span class="pt ${cls}">${right}</span></div>`;
     }
     const fbLines = r.lines.fourball.length ? r.lines.fourball.map(fmtLine).join('') : `<div class="empty-note">No fourball matches added yet</div>`;
     const scLines = r.lines.scramble.length ? r.lines.scramble.map(fmtLine).join('') : `<div class="empty-note">No scramble matches added yet</div>`;
@@ -763,7 +771,7 @@
         <div class="lb-box eur"><div class="pts tnum">${fmtPts(r.eur)}</div><div class="lbl">${esc(meta.teamEur)}</div></div>
       </div>
       <div class="bar"><div class="fill-row" style="width:${rowPct}%"></div><div class="fill-eur" style="width:${eurPct}%"></div><div style="width:${restPct}%"></div></div>
-      <div class="empty-note" style="margin-bottom:14px;">${r.holesPlayed} of ${r.total} holes played · W = 1 pt, T = ½ pt each</div>
+      <div class="empty-note" style="margin-bottom:14px;">${r.decidedCount} of ${r.total} matches finished · 1 point per match won, ½ each if level</div>
       <div class="lb-format"><h3>Game 1 · Scramble</h3>${scLines}</div>
       <div class="lb-format"><h3>Game 2 · Fourball</h3>${fbLines}</div>
       <div class="lb-format"><h3>Game 3 · Singles</h3>${r.lines.singles.map(fmtLine).join('')}</div>
