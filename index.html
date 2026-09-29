@@ -859,12 +859,12 @@
       </header>
       <div class="cd-bar" id="countdown-bar">${countdownBarInner()}</div>
       ${activeTab!=='setup' ? `<nav class="tabs">
+        <button data-tab="info" class="${activeTab==='info'?'active':''}">Info</button>
         <button data-tab="scramble" class="${activeTab==='scramble'?'active':''}">Scramble</button>
         <button data-tab="fourball" class="${activeTab==='fourball'?'active':''}">Fourball</button>
         <button data-tab="singles" class="${activeTab==='singles'?'active':''}">Singles</button>
         <button data-tab="leaderboard" class="${activeTab==='leaderboard'?'active':''}">Leaderboard</button>
         <button data-tab="photos" class="${activeTab==='photos'?'active':''}">Photos</button>
-        <button data-tab="info" class="${activeTab==='info'?'active':''}">Info</button>
       </nav>` : ''}
       ${body}
     `;
