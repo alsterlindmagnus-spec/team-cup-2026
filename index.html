@@ -170,6 +170,10 @@
   .lb-hero img{ width:132px; height:auto; }
   .info-hero{ text-align:center; padding:6px 0 14px; }
   .info-hero img{ width:170px; height:auto; }
+  .trophy-img{ width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--gold); box-shadow:0 4px 14px rgba(0,0,0,.18); }
+  .trophy-cap{ text-align:center; margin:12px 0 4px; }
+  .trophy-cap h2{ margin:0; font-size:20px; color:var(--green-deep); }
+  .trophy-cap div{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
 </style>
 </head>
 <body>
@@ -206,7 +210,7 @@
   let defs = { singles:{}, fourball:{}, scramble:{} };
   let scores = { singles:{}, fourball:{}, scramble:{} };
   let openKey = null;
-  let activeTab = 'scramble';
+  let activeTab = 'trophy';
   let ready = false;
   let db = null;
   let syncMode = 'local';
@@ -766,6 +770,17 @@
     </div>`;
   }
 
+  // Opening tab. Trophy.jpeg sits next to index.html (in the repo and the Desktop folder).
+  function renderTrophy(){
+    return `<div class="panel">
+      <img class="trophy-img" src="Trophy.jpeg" alt="Team Cup 2026 trophy">
+      <div class="trophy-cap">
+        <h2 class="display">The Team Cup 2026</h2>
+        <div>${esc(meta.teamRow)} vs ${esc(meta.teamEur)} · ${esc(meta.venue)} · ${esc(meta.date)}</div>
+      </div>
+    </div>`;
+  }
+
   function renderInfo(){
     const ovRows = ids.singles.map((id,n)=>{
       const d = defs.singles[id];
@@ -838,6 +853,7 @@
     let body = '';
     if(activeTab==='setup') body = renderSetup();
     else if(activeTab==='leaderboard') body = renderLeaderboard();
+    else if(activeTab==='trophy') body = renderTrophy();
     else if(activeTab==='info') body = renderInfo();
     else if(activeTab==='photos') body = renderPhotos();
     else if(activeTab==='singles') body = `<div class="panel">${siWarning()? `<div class="warn-banner">${siWarning()}</div>` : ''}<div class="section-title">Game 3 · Singles <span class="nine-pill">${meta.singlesNine==='back'?'back':'front'} 9</span></div>${ids.singles.map(renderSinglesCard).join('')}<button class="add-match-btn" data-add="singles">+ Add singles match</button></div>`;
@@ -859,6 +875,7 @@
       </header>
       <div class="cd-bar" id="countdown-bar">${countdownBarInner()}</div>
       ${activeTab!=='setup' ? `<nav class="tabs">
+        <button data-tab="trophy" class="${activeTab==='trophy'?'active':''}">Trophy</button>
         <button data-tab="info" class="${activeTab==='info'?'active':''}">Info</button>
         <button data-tab="scramble" class="${activeTab==='scramble'?'active':''}">Scramble</button>
         <button data-tab="fourball" class="${activeTab==='fourball'?'active':''}">Fourball</button>
