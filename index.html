@@ -272,16 +272,16 @@
     {row:[{n:'Pavel Kysela',hcp:14.7,s:4},{n:'Ronald Dasbach',hcp:20.0,s:6}], eur:[{n:'Fredrik Millde',hcp:16.1,s:4},{n:'Fredrik Enqvist',hcp:6.3,s:0}]},
     {row:[{n:'Grant McKenzie',hcp:6.1,s:1},{n:'Jean Pascal Duviesart',hcp:20.4,s:7}], eur:[{n:'Fredrik Lagerman',hcp:4.7,s:0},{n:'H\u00e5kan Jevrell',hcp:20.7,s:7}]},
     {row:[{n:'Oscar Johansson',hcp:16.3,s:5},{n:'Steve Tennant',hcp:23.1,s:8}], eur:[{n:'Mats Wilborg',hcp:6.0,s:0},{n:'Filip Bjurstr\u00f6m',hcp:18.7,s:6}]},
-    {row:[{n:'Ji\u0159\u00ed Pavl\u00ed\u010dek',hcp:6.6,s:0},{n:'John Tokaruk',hcp:18.9,s:6}], eur:[{n:'Fredrik Nyr\u00e9n',hcp:7.8,s:1},{n:'Erik W\u00e4nnstr\u00f6m',hcp:21.0,s:6}]},
-    {row:[{n:'Magnus Alsterlind',hcp:8.7,s:0},{n:'Paul Cook',hcp:16.8,s:4}], eur:[{n:'Richard Thorstrand',hcp:9.4,s:0},{n:'Christopher Thorstrand',hcp:13.2,s:2}]},
+    {row:[{n:'Ji\u0159\u00ed Pavl\u00ed\u010dek',hcp:6.6,s:0},{n:'John Tokaruk',hcp:18.9,s:6}], eur:[{n:'Richard Thorstrand',hcp:9.4,s:1},{n:'Erik W\u00e4nnstr\u00f6m',hcp:21.0,s:6}]},
+    {row:[{n:'Magnus Alsterlind',hcp:8.7,s:0},{n:'Paul Cook',hcp:16.8,s:4}], eur:[{n:'Fredrik Nyr\u00e9n',hcp:7.8,s:0},{n:'Christopher Thorstrand',hcp:13.2,s:2}]},
   ];
 
   const PRELOAD_SCRAMBLE = [
     {row:{n:'Alsterlind / Cook', team:5.57, h9:3}, eur:{n:'Millde / Enqvist', team:4.62, h9:2}},
     {row:{n:'McKenzie / Duviesart', team:5.20, h9:3}, eur:{n:'Lagerman / Jevrell', team:4.75, h9:2}},
     {row:{n:'Johansson / Tennant', team:9.17, h9:5}, eur:{n:'Wilborg / Bjurstr\u00f6m', team:4.90, h9:2}},
-    {row:{n:'Pavl\u00ed\u010dek / Tokaruk', team:5.14, h9:3}, eur:{n:'Nyr\u00e9n / W\u00e4nnstr\u00f6m', team:5.88, h9:3}},
-    {row:{n:'Kysela / Dasbach', team:8.14, h9:4}, eur:{n:'R. Thorstrand / C. Thorstrand', team:5.27, h9:3}},
+    {row:{n:'Pavl\u00ed\u010dek / Tokaruk', team:5.14, h9:3}, eur:{n:'R. Thorstrand / W\u00e4nnstr\u00f6m', team:6.44, h9:3}},
+    {row:{n:'Kysela / Dasbach', team:8.14, h9:4}, eur:{n:'Nyr\u00e9n / C. Thorstrand', team:4.71, h9:2}},
   ];
 
   const SCHEDULE = [
@@ -336,7 +336,7 @@
     ensureObjects();
   }
 
-  const SEED_VERSION = 7;
+  const SEED_VERSION = 8;
 
   function configBody(){
     return { seedVersion: SEED_VERSION, meta, siFront, siBack,
@@ -449,9 +449,9 @@
   }
 
   async function migrate(fromVersion){
-    // v4: updated handicaps for McKenzie, Johansson and Cook. v5: Milde renamed Millde. v6: singles re-ordered by hcp.
+    // v4: updated handicaps for McKenzie, Johansson and Cook. v5: Milde renamed Millde. v6: singles re-ordered by hcp. v8: Nyrén and R. Thorstrand swapped in fourball/scramble 4-5.
     // Re-applying the preloads refreshes names, handicaps and strokes; scores already entered are kept.
-    if(fromVersion < 7){ migrateSingles(); migrateV3(); }
+    if(fromVersion < 8){ migrateSingles(); migrateV3(); }
     // v7: drop empty matches (a blank "TBC v TBC" scramble pairing had been added on the live site)
     if(fromVersion < 7){
       for(const type of ['singles','fourball','scramble']){
